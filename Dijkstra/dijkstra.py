@@ -42,13 +42,13 @@ def dijkstra(graph, start, end):
 
         current_node = find_next_node(graph, visited, distances)
         """
-        print(current_node)              # current node (point we are looking at)
-        print(graph[current_node])       # Nodes conections to other nodes
-        print(distances)                 # Currently know lowest distances
-        print(distances[current_node])   # Distance to current node
+        #print(current_node)              # current node (point we are looking at)
+        #print(graph[current_node])       # Nodes conections to other nodes
+        #print(distances)                 # Currently know lowest distances
+        #print(distances[current_node])   # Distance to current node
 
         for neighbor, weight in graph[current_node].items():    # .items() basically iterates over the dictionary assigning both the key and value to the correct variables. If you don't put 2 variables it will put them in a list.
-            print(weight, neighbor, distances[neighbor])
+            #print(weight, neighbor, distances[neighbor])
             if distances[current_node] + weight < distances[neighbor]:  # if the travel cost from current node to next one is less then 
                 distances[neighbor] = distances[current_node] + weight  # currently known dsitance, update that distance.
 
