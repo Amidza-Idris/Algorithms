@@ -4,27 +4,60 @@ def dijkstra(graph, start, end):
     #but rather a very high number.
 
     distances = {node: float('infinity') for node in graph} 
-    print(distances)
     # print(float('infinity'))    # we can see the float('infinity') in action, it has value inf
     distances[start] = 0
-    print(distances)
     visited = set()     # Initializes an empty set (has it's own functions), and it can accept a dict to display it as a set. the elements 
                         # are at random postions
 
     while visited != set(graph):
-        current_node = min((node for node in graph if node not in visited), key=lambda x: distances[x])
-        print(current_node)
-        print(graph[current_node])
+        current_node = min((node for node in graph if node not in visited), key=lambda x: distances[x]) # Basically, takes a point and then
+        # looks at its connections. it updates the distances for each point trough a lambda function. This can be written in the following way
+        # to make it more understandable:
+        """
+        def get_distance_for_node(node):
+            return distances[node]
 
-        for neighbor, weight in graph[current_node].items():
-            if distances[current_node] + weight < distances[neighbor]:
-                distances[neighbor] = distances[current_node] + weight
+        def find_next_node(graph, visited, distances):
+            # This creates a list of unvisited nodes.
+            unvisited_nodes = [node for node in graph if node not in visited]
 
-        visited.add(current_node)
+#___________Equivelent to following code_____⇑___________________________________________________________________________
+            def find_unvisited_nodes(graph, visited):
+                unvisited_nodes = []
 
-    return distances[end]
+                # Iterate through all nodes in the graph and check if they are not in the visited set.
+                for node in graph:
+                    if node not in visited:
+                        unvisited_nodes.append(node)
 
-# Example usage:
+                return unvisited_nodes
+            
+
+            # Now you can use this function to get the list of unvisited nodes
+            unvisited_nodes = find_unvisited_nodes(graph, visited)
+#___________________________________________________________________________________________________________________________
+         # Find the node with the minimum distance using the built-in min function and our named function.
+            next_node = min(unvisited_nodes, key=get_distance_for_node)
+            return next_node
+
+        current_node = find_next_node(graph, visited, distances)
+        """
+        print(current_node)              # current node (point we are looking at)
+        print(graph[current_node])       # Nodes conections to other nodes
+        print(distances)                 # Currently know lowest distances
+        print(distances[current_node])   # Distance to current node
+
+        for neighbor, weight in graph[current_node].items():    # .items() basically iterates over the dictionary assigning both the key and value to the correct variables. If you don't put 2 variables it will put them in a list.
+            print(weight, neighbor, distances[neighbor])
+            if distances[current_node] + weight < distances[neighbor]:  # if the travel cost from current node to next one is less then 
+                distances[neighbor] = distances[current_node] + weight  # currently known dsitance, update that distance.
+
+        visited.add(current_node)   # Since we are using while loop, we must update the visited, otherwise... infinity.
+
+    return distances[end]   # after while loop is finished all known distances are updated and we can see shortest distance to each path
+                            # but we only want to see the disteance to one specific point.
+
+# Example graph:
 graph = {
     'A': {'B': 1, 'C': 4, 'E':1},
     'B': {'A': 1, 'C': 2, 'D': 5},
@@ -33,76 +66,7 @@ graph = {
     'E': {'D': 1, 'A': 1}
 }
 
-# Loading data from txt
+# Loading data from txt (To be implemented - gen_graph.py)
 
 shortest_path_distance = dijkstra(graph, 'A', 'D')
 print("Shortest Path Distance:", shortest_path_distance)
-
-
-
-
-"""
-# Dijkstra's Algorithm old version
-
-
-import sys
-
-# Providing the graph
-vertices = [[0, 0, 1, 1, 0, 0, 0],
-            [0, 0, 1, 0, 0, 1, 0],
-            [1, 1, 0, 1, 1, 0, 0],
-            [1, 0, 1, 0, 0, 0, 1],
-            [0, 0, 1, 0, 0, 1, 0],
-            [0, 1, 0, 0, 1, 0, 1],
-            [0, 0, 0, 1, 0, 1, 0]]
-
-edges = [[0, 0, 1, 2, 0, 0, 0],
-         [0, 0, 2, 0, 0, 3, 0],
-         [1, 2, 0, 1, 3, 0, 0],
-         [2, 0, 1, 0, 0, 0, 1],
-         [0, 0, 3, 0, 0, 2, 0],
-         [0, 3, 0, 0, 2, 0, 1],
-         [0, 0, 0, 1, 0, 1, 0]]
-
-# Find which vertex is to be visited next
-def to_be_visited():
-    global visited_and_distance
-    v = -10
-    for index in range(num_of_vertices):
-        if visited_and_distance[index][0] == 0 \
-            and (v < 0 or visited_and_distance[index][1] <=
-                 visited_and_distance[v][1]):
-            v = index
-    return v
-
-
-num_of_vertices = len(vertices[0])
-
-visited_and_distance = [[0, 0]]
-for i in range(num_of_vertices-1):
-    visited_and_distance.append([0, sys.maxsize])
-
-for vertex in range(num_of_vertices):
-
-    # Find next vertex to be visited
-    to_visit = to_be_visited()
-    for neighbor_index in range(num_of_vertices):
-
-        # Updating new distances
-        if vertices[to_visit][neighbor_index] == 1 and \
-                visited_and_distance[neighbor_index][0] == 0:
-            new_distance = visited_and_distance[to_visit][1] \
-                + edges[to_visit][neighbor_index]
-            if visited_and_distance[neighbor_index][1] > new_distance:
-                visited_and_distance[neighbor_index][1] = new_distance
-        
-        visited_and_distance[to_visit][0] = 1
-
-i = 0
-
-# Printing the distance
-for distance in visited_and_distance:
-    print("Distance of ", chr(ord('a') + i),
-          " from source vertex: ", distance[1])
-    i = i + 1
-"""
